@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IronPulse Gym - Unleash Your Potential</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Supabase JS -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+
+    <style>
+        body { font-family: 'Roboto', sans-serif; }
+        .brand-font { font-family: 'Oswald', sans-serif; }
+        .hero-bg {
+            background-image: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('https://picsum.photos/seed/gym_weights/1600/900');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed; /* Parallax effect */
+        }
+        .hidden-section { display: none; }
+        .fade-in { animation: fadeIn 0.3s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    </style>
+</head>
+<body class="bg-white text-gray-900">
+
+    <!-- Navigation -->
+    <nav class="bg-white fixed w-full z-50 shadow-lg border-b-4 border-orange-500">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <i data-lucide="dumbbell" class="h-8 w-8 text-orange-600 mr-2"></i>
+                    <span class="brand-font text-3xl uppercase tracking-wider text-gray-900">Iron<span class="text-orange-600">Pulse</span></span>
+                </div>
+                <div class="hidden md:flex items-center space-x-8">
+                    <button onclick="showPage('home')" class="brand-font text-xl hover:text-orange-600 transition">Home</button>
+                    <button onclick="showPage('plans')" class="brand-font text-xl hover:text-orange-600 transition">Membership</button>
+                    
+                    <!-- Auth Buttons -->
+                    <div id="auth-buttons" class="flex items-center space-x-4">
+                        <button onclick="showPage('login')" class="text-orange-600 font-bold">Log In</button>
+                    </div>
+
+                    <!-- User Menu -->
+                    <div id="user-menu" class="hidden flex items-center space-x-4">
+                        <span id="user-email" class="text-sm text-gray-500 font-bold"></span>
+                        <button onclick="showPage('admin')" class="text-sm font-bold hover:text-black bg-gray-100 px-3 py-1 rounded">Admin</button>
+                        <button onclick="handleLogout()" class="text-sm font-bold text-red-500">Logout</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="pt-16">
+
+        <!-- ================= HOME PAGE ================= -->
+        <section id="page-home" class="fade-in">
+            <div class="hero-bg h-[700px] flex items-center justify-center text-center px-4">
+                <div class="max-w-4xl">
+                    <h1 class="brand-font text-6xl md:text-8xl text-white mb-6 uppercase">Sweat Now,<br>Shine Later.</h1>
+                    <p class="text-xl text-gray-200 mb-10 font-light">Join the best gym in Westlands. Top equipment, expert trainers, and a community that pushes you.</p>
+                    <button onclick="showPage('plans')" class="bg-orange-600 hover:bg-orange-700 text-white brand-font text-2xl py-4 px-10 rounded shadow-xl uppercase tracking-widest transition transform hover:scale-105">
+                        View Plans
+                    </button>
+                </div>
+            </div>
+
+            <!-- Stats/Info -->
+            <div class="bg-gray-900 py-12">
+                <div class="max-w-7xl mx-auto px-4 grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+                    <div>
+                        <i data-lucide="activity" class="h-8 w-8 text-orange-500 mx-auto mb-2"></i>
+                        <h3 class="text-3xl font-bold text-white">50+</h3>
+                        <p class="text-gray-400">Machines</p>
+                    </div>
+                    <div>
+                        <i data-lucide="users" class="h-8 w-8 text-orange-500 mx-auto mb-2"></i>
+                        <h3 class="text-3xl font-bold text-white">1000+</h3>
+                        <p class="text-gray-400">Members</p>
+                    </div>
+                    <div>
+                        <i data-lucide="zap" class="h-8 w-8 text-orange-500 mx-auto mb-2"></i>
+                        <h3 class="text-3xl font-bold text-white">24/7</h3>
+                        <p class="text-gray-400">Access</p>
+                    </div>
+                    <div>
+                        <i data-lucide="map-pin" class="h-8 w-8 text-orange-500 mx-auto mb-2"></i>
+                        <h3 class="text-3xl font-bold text-white">Westlands</h3>
+                        <p class="text-gray-400">Location</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= PLANS PAGE ================= -->
+        <section id="page-plans" class="hidden-section fade-in max-w-7xl mx-auto px-4 py-20">
+            <h2 class="brand-font text-5xl text-center mb-4 uppercase">Membership Plans</h2>
+            <p class="text-center text-gray-500 mb-16">Choose the package that fits your goals.</p>
+
+            <div id="plans-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <!-- Plans injected here -->
+            </div>
+        </section>
+
+        <!-- ================= LOGIN ================= -->
+        <section id="page-login" class="hidden-section fade-in max-w-md mx-auto px-4 py-20">
+            <div class="bg-white p-8 rounded-xl shadow-2xl border-t-8 border-orange-600">
+                <h2 class="text-2xl font-bold text-center mb-6 brand-font uppercase">Member Login</h2>
+                <form onsubmit="handleLogin(event)" class="space-y-4">
+                    <input type="email" id="login-email" required placeholder="Email Address" class="w-full border p-4 rounded bg-gray-50 focus:outline-none focus:border-orange-500">
+                    <input type="password" id="login-password" required placeholder="Password" class="w-full border p-4 rounded bg-gray-50 focus:outline-none focus:border-orange-500">
+                    <button type="submit" class="w-full bg-orange-600 text-white py-4 rounded font-bold hover:bg-orange-700 transition uppercase">Enter</button>
+                </form>
+                <p class="mt-6 text-center text-sm text-gray-500">Not a member? <button onclick="showPage('signup')" class="text-orange-600 font-bold">Create Account</button></p>
+            </div>
+        </section>
+
+        <!-- ================= SIGNUP ================= -->
+        <section id="page-signup" class="hidden-section fade-in max-w-md mx-auto px-4 py-20">
+            <div class="bg-white p-8 rounded-xl shadow-2xl border-t-8 border-orange-600">
+                <h2 class="text-2xl font-bold text-center mb-6 brand-font uppercase">Join The Club</h2>
+                <form onsubmit="handleSignup(event)" class="space-y-4">
+                    <input type="text" id="signup-name" required placeholder="Full Name" class="w-full border p-4 rounded">
+                    <input type="email" id="signup-email" required placeholder="Email" class="w-full border p-4 rounded">
+                    <input type="tel" id="signup-phone" required placeholder="254-723-456-789" class="w-full border p-4 rounded">
+                    <input type="password" id="signup-password" required placeholder="Password" class="w-full border p-4 rounded">
+                    <button type="submit" class="w-full bg-orange-600 text-white py-4 rounded font-bold hover:bg-orange-700 transition uppercase">Sign Up</button>
+                </form>
+            </div>
+        </section>
+
+        <!-- ================= ADMIN DASHBOARD ================= -->
+        <section id="page-admin" class="hidden-section fade-in max-w-7xl mx-auto px-4 py-8">
+            <h2 class="text-3xl font-bold mb-6 brand-font">Gym Management</h2>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Add Plan Form -->
+                <div class="bg-white p-6 rounded-xl shadow border-l-4 border-orange-500 h-fit">
+                    <h3 class="text-xl font-bold mb-4 uppercase">Add Membership Plan</h3>
+                    <form onsubmit="addPlan(event)" class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-bold mb-1">Plan Name</label>
+                            <input type="text" id="plan-name" required placeholder="e.g. Gold Membership" class="w-full border p-2 rounded">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-bold mb-1">Price (Ksh)</label>
+                            <input type="number" id="plan-price" required placeholder="5000" class="w-full border p-2 rounded">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-bold mb-1">Features (Comma Separated)</label>
+                            <input type="text" id="plan-features" required placeholder="WiFi, Sauna, Locker" class="w-full border p-2 rounded">
+                        </div>
+                        <button type="submit" class="w-full bg-gray-900 text-white py-2 rounded font-bold uppercase">Add Plan</button>
+                    </form>
+                </div>
+
+                <!-- Leads Table -->
+                <div class="lg:col-span-2 bg-white p-6 rounded-xl shadow">
+                    <h3 class="text-xl font-bold mb-4 uppercase">New Leads / Signups</h3>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="bg-orange-50 border-b-2 border-orange-200">
+                                    <th class="p-3">Name</th>
+                                    <th class="p-3">Email</th>
+                                    <th class="p-3">Phone</th>
+                                    <th class="p-3">Interested In</th>
+                                </tr>
+                            </thead>
+                            <tbody id="leads-table">
+                                <!-- Leads injected here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Join Modal -->
+    <div id="join-modal" class="hidden fixed inset-0 bg-black/70 z-[60] flex items-center justify-center p-4">
+        <div class="bg-white rounded-xl max-w-md w-full p-8 relative">
+            <button onclick="closeModal()" class="absolute top-4 right-4 text-gray-400 hover:text-black"><i data-lucide="x" class="w-6 h-6"></i></button>
+            
+            <h3 class="text-2xl font-bold mb-2 uppercase brand-font">Join IronPulse</h3>
+            <p id="modal-plan-name" class="text-orange-600 font-bold text-lg mb-6"></p>
+            
+            <form onsubmit="submitJoin(event)">
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-bold mb-1">Full Name</label>
+                        <input type="text" id="lead-name" required class="w-full border p-3 rounded bg-gray-50">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold mb-1">Email</label>
+                        <input type="email" id="lead-email" required class="w-full border p-3 rounded bg-gray-50">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold mb-1">Phone Number</label>
+                        <input type="tel" id="lead-phone" required placeholder="254-7..." class="w-full border p-3 rounded bg-gray-50">
+                    </div>
+                    <button type="submit" class="w-full bg-orange-600 text-white py-3 rounded font-bold hover:bg-orange-700 uppercase tracking-wide">
+                        Request Membership
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="toast" class="fixed bottom-5 right-5 bg-gray-900 text-white px-6 py-3 rounded-lg shadow-lg transform translate-y-20 transition z-[70]">Message</div>
+
+    <script>
+        // ================= SUPABASE SETUP =================
+        const { createClient } = supabase;
+        const supabaseClient = createClient('https://wacaibruxanqbkzdnkqr.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndhY2FpYnJ1eGFucWJremRua3FyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgzMjkxNTIsImV4cCI6MjA5MzkwNTE1Mn0._S75Sc-0iyRfBeEanJlMvmlPfuHNuBk_6zznYU4wPPc', {
+            auth: { persistSession: true, storageKey: 'epsilon-bsn-auth' }
+        });
+
+        let currentUser = null;
+        let selectedPlanName = null;
+
+        // Default Plans
+        const defaultPlans = [
+            { id: 1, name: 'Day Pass', price: 500, features: ['Full Gym Access', 'Locker Room', 'Shower'] },
+            { id: 2, name: 'Monthly', price: 3000, features: ['Unlimited Access', 'Group Classes', 'Free WiFi'] },
+            { id: 3, name: 'Quarterly', price: 8000, features: ['All Monthly Features', 'Sauna Access', '1 PT Session'] },
+            { id: 4, name: 'Yearly VIP', price: 30000, features: ['All Access', 'Personal Locker', 'Private Trainer', 'Merch'] },
+        ];
+
+        window.addEventListener('load', async () => {
+            lucide.createIcons();
+            checkUser();
+            renderPlans();
+        });
+
+        async function checkUser() {
+            const { data: { session } } = await supabaseClient.auth.getSession();
+            if (session) {
+                currentUser = session.user;
+                document.getElementById('auth-buttons').classList.add('hidden');
+                document.getElementById('user-menu').classList.remove('hidden');
+                document.getElementById('user-email').textContent = currentUser.email;
+            }
+        }
+
+        async function handleLogin(e) {
+            e.preventDefault();
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+            const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
+            if (error) showToast(error.message);
+            else { showToast("Welcome back!"); checkUser(); showPage('home'); }
+        }
+
+        async function handleSignup(e) {
+            e.preventDefault();
+            const email = document.getElementById('signup-email').value;
+            const password = document.getElementById('signup-password').value;
+            const { error } = await supabaseClient.auth.signUp({ email, password });
+            if (error) showToast(error.message);
+            else showToast("Account created!");
+        }
+
+        async function handleLogout() {
+            await supabaseClient.auth.signOut();
+            location.reload();
+        }
+
+        function showPage(pageId) {
+            document.querySelectorAll('main > section').forEach(el => el.classList.add('hidden-section'));
+            document.getElementById(`page-${pageId}`).classList.remove('hidden-section');
+            window.scrollTo(0,0);
+            if (pageId === 'admin' && !currentUser) showPage('login');
+            else if (pageId === 'admin') loadLeads();
+        }
+
+        // ================= PLANS LOGIC =================
+        async function renderPlans() {
+            const grid = document.getElementById('plans-grid');
+            grid.innerHTML = '';
+            
+            let plans = defaultPlans;
+            // Fetching from 'gym_plans'
+            const { data } = await supabaseClient.from('gym_plans').select('*');
+            if (data && data.length > 0) plans = data;
+
+            plans.forEach((p, index) => {
+                const card = document.createElement('div');
+                // Highlight the "Monthly" or most popular plan
+                const highlight = index === 1 ? "border-4 border-orange-500 transform scale-105 z-10 bg-white shadow-2xl" : "bg-gray-50 shadow-lg";
+                
+                card.className = `rounded-xl p-8 flex flex-col relative ${highlight}`;
+                
+                // Render Features list
+                const featuresHtml = p.features.map(f => `<li class="flex items-center text-sm text-gray-600"><i data-lucide="check" class="w-4 h-4 mr-2 text-orange-500"></i> ${f}</li>`).join('');
+
+                card.innerHTML = `
+                    <h3 class="text-2xl font-bold mb-2 uppercase brand-font">${p.name}</h3>
+                    <div class="text-4xl font-bold text-gray-900 mb-6">Ksh ${p.price.toLocaleString()}</div>
+                    <ul class="space-y-3 mb-8 flex-grow">
+                        ${featuresHtml}
+                    </ul>
+                    <button onclick="openJoinModal('${p.name}')" class="w-full py-3 rounded font-bold uppercase ${index === 1 ? 'bg-orange-600 text-white hover:bg-orange-700' : 'bg-gray-900 text-white hover:bg-gray-800'} transition">
+                        Join Now
+                    </button>
+                `;
+                grid.appendChild(card);
+            });
+            lucide.createIcons();
+        }
+
+        // ================= JOIN LOGIC =================
+        function openJoinModal(name) {
+            selectedPlanName = name;
+            document.getElementById('modal-plan-name').innerText = `Selected: ${name}`;
+            document.getElementById('join-modal').classList.remove('hidden');
+        }
+
+        async function submitJoin(e) {
+            e.preventDefault();
+            const name = document.getElementById('lead-name').value;
+            const email = document.getElementById('lead-email').value;
+            const phone = document.getElementById('lead-phone').value;
+
+            // Inserting into 'gym_leads'
+            const { error } = await supabaseClient.from('gym_leads').insert([{
+                user_name: name,
+                user_email: email,
+                user_phone: phone,
+                plan_name: selectedPlanName
+            }]);
+
+            if (error) showToast(error.message);
+            else { showToast("Request Sent! We will call you."); closeModal(); }
+        }
+
+        function closeModal() {
+            document.getElementById('join-modal').classList.add('hidden');
+        }
+
+        // ================= ADMIN LOGIC =================
+        async function addPlan(e) {
+            e.preventDefault();
+            const name = document.getElementById('plan-name').value;
+            const price = parseFloat(document.getElementById('plan-price').value);
+            const featuresStr = document.getElementById('plan-features').value;
+            const features = featuresStr.split(',').map(s => s.trim());
+
+            // Inserting into 'gym_plans'
+            const { error } = await supabaseClient.from('gym_plans').insert([{
+                name, price, features
+            }]);
+
+            if (error) showToast(error.message);
+            else { showToast("Plan Added!"); e.target.reset(); renderPlans(); }
+        }
+
+        async function loadLeads() {
+            // Fetching from 'gym_leads'
+            const { data } = await supabaseClient.from('gym_leads').select('*').order('created_at', { ascending: false });
+            const tbody = document.getElementById('leads-table');
+            
+            if (!data || data.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4" class="p-4 text-center text-gray-500">No new leads yet.</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = data.map(l => `
+                <tr class="border-b hover:bg-gray-50">
+                    <td class="p-3 font-bold">${l.user_name}</td>
+                    <td class="p-3">${l.user_email}</td>
+                    <td class="p-3 text-sm text-gray-600">${l.user_phone}</td>
+                    <td class="p-3 text-orange-600 font-bold">${l.plan_name}</td>
+                </tr>
+            `).join('');
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            toast.textContent = msg;
+            toast.classList.remove('translate-y-20');
+            setTimeout(() => toast.classList.add('translate-y-20'), 3000);
+        }
+    </script>
+</body>
+</html>
+  
