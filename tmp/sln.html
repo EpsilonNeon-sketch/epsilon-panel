@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bella Glow Salon - Beauty & Wellness</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Supabase JS -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+
+    <style>
+        body { font-family: 'Lato', sans-serif; }
+        .brand-font { font-family: 'Playfair Display', serif; }
+        .hero-bg {
+            background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('https://picsum.photos/seed/salon/1600/900');
+            background-size: cover;
+            background-position: center;
+        }
+        .hidden-section { display: none; }
+        .fade-in { animation: fadeIn 0.5s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    </style>
+</head>
+<body class="bg-rose-50 text-gray-800">
+
+    <!-- Navigation -->
+    <nav class="bg-white shadow-sm fixed w-full z-50 border-b border-rose-100">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16 items-center">
+                <div class="flex items-center">
+                    <i data-lucide="sparkles" class="h-6 w-6 text-rose-500 mr-2"></i>
+                    <span class="brand-font text-2xl font-bold tracking-wide text-gray-900">Bella<span class="text-rose-500">Glow</span></span>
+                </div>
+                <div class="hidden md:flex items-center space-x-8">
+                    <button onclick="showPage('home')" class="text-gray-600 hover:text-rose-600 transition">Home</button>
+                    <button onclick="showPage('services')" class="text-gray-600 hover:text-rose-600 transition">Services</button>
+                    
+                    <!-- Auth Buttons -->
+                    <div id="auth-buttons" class="flex items-center space-x-4">
+                        <button onclick="showPage('login')" class="text-rose-600 font-bold hover:text-rose-700">Log in</button>
+                    </div>
+
+                    <!-- User Menu -->
+                    <div id="user-menu" class="hidden flex items-center space-x-4">
+                        <span id="user-email" class="text-sm text-gray-500"></span>
+                        <button onclick="showPage('admin')" class="text-sm bg-rose-100 hover:bg-rose-200 text-rose-800 px-3 py-1 rounded transition">Admin</button>
+                        <button onclick="handleLogout()" class="text-sm text-red-500">Logout</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="pt-16">
+
+        <!-- ================= HOME PAGE ================= -->
+        <section id="page-home" class="fade-in">
+            <div class="hero-bg h-[600px] flex items-center justify-center text-center px-4">
+                <div class="max-w-3xl">
+                    <h1 class="brand-font text-5xl md:text-7xl text-white mb-6 drop-shadow-lg">Beauty Redefined</h1>
+                    <p class="text-xl text-gray-100 mb-8 font-light">Experience the ultimate relaxation and transformation at Nairobi's premier salon.</p>
+                    <button onclick="showPage('services')" class="bg-rose-500 hover:bg-rose-600 text-white font-bold py-3 px-8 rounded-full shadow-lg transition transform hover:scale-105">
+                        Book Appointment
+                    </button>
+                </div>
+            </div>
+
+            <div class="max-w-7xl mx-auto px-4 py-16">
+                <h2 class="text-3xl font-bold text-center mb-10 brand-font">Why Choose Bella Glow?</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div class="bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition text-center">
+                        <div class="bg-rose-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i data-lucide="flower-2" class="h-8 w-8 text-rose-500"></i>
+                        </div>
+                        <h3 class="font-bold text-xl mb-2">Premium Products</h3>
+                        <p class="text-gray-600 text-sm">We use only organic and high-end beauty products.</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition text-center">
+                        <div class="bg-rose-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i data-lucide="smile" class="h-8 w-8 text-rose-500"></i>
+                        </div>
+                        <h3 class="font-bold text-xl mb-2">Expert Stylists</h3>
+                        <p class="text-gray-600 text-sm">Our team is trained in the latest trends and techniques.</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition text-center">
+                        <div class="bg-rose-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i data-lucide="coffee" class="h-8 w-8 text-rose-500"></i>
+                        </div>
+                        <h3 class="font-bold text-xl mb-2">Relaxing Ambience</h3>
+                        <p class="text-gray-600 text-sm">A calm environment designed for your peace of mind.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= SERVICES PAGE ================= -->
+        <section id="page-services" class="hidden-section fade-in max-w-7xl mx-auto px-4 py-8">
+            <h2 class="text-4xl font-bold text-center mb-2 brand-font">Our Menu</h2>
+            <p class="text-center text-gray-500 mb-10">Select a service and book your slot.</p>
+
+            <div id="services-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Services injected here -->
+            </div>
+        </section>
+
+        <!-- ================= LOGIN / SIGNUP ================= -->
+        <section id="page-login" class="hidden-section fade-in max-w-md mx-auto px-4 py-20">
+            <div class="bg-white p-8 rounded-xl shadow-lg border-t-4 border-rose-500">
+                <h2 class="text-2xl font-bold text-center mb-6">Welcome Back</h2>
+                <form onsubmit="handleLogin(event)" class="space-y-4">
+                    <input type="email" id="login-email" required placeholder="Email" class="w-full border p-3 rounded bg-rose-50 focus:outline-none focus:ring-2 focus:ring-rose-200">
+                    <input type="password" id="login-password" required placeholder="Password" class="w-full border p-3 rounded bg-rose-50 focus:outline-none focus:ring-2 focus:ring-rose-200">
+                    <button type="submit" class="w-full bg-gray-900 text-white py-3 rounded font-bold hover:bg-gray-800 transition">Log In</button>
+                </form>
+                <p class="mt-4 text-center text-sm">New here? <button onclick="showPage('signup')" class="text-rose-600 font-bold">Create Account</button></p>
+            </div>
+        </section>
+
+        <section id="page-signup" class="hidden-section fade-in max-w-md mx-auto px-4 py-20">
+            <div class="bg-white p-8 rounded-xl shadow-lg border-t-4 border-rose-500">
+                <h2 class="text-2xl font-bold text-center mb-6">Join Bella Glow</h2>
+                <form onsubmit="handleSignup(event)" class="space-y-4">
+                    <input type="text" id="signup-name" required placeholder="Full Name" class="w-full border p-3 rounded">
+                    <input type="email" id="signup-email" required placeholder="Email" class="w-full border p-3 rounded">
+                    <input type="tel" id="signup-phone" required placeholder="254-723-456-789" class="w-full border p-3 rounded">
+                    <input type="password" id="signup-password" required placeholder="Password" class="w-full border p-3 rounded">
+                    <button type="submit" class="w-full bg-rose-500 text-white py-3 rounded font-bold hover:bg-rose-600 transition">Sign Up</button>
+                </form>
+            </div>
+        </section>
+
+        <!-- ================= ADMIN DASHBOARD ================= -->
+        <section id="page-admin" class="hidden-section fade-in max-w-7xl mx-auto px-4 py-8">
+            <h2 class="text-3xl font-bold mb-6 brand-font">Salon Management</h2>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Add Service Form -->
+                <div class="bg-white p-6 rounded-xl shadow h-fit">
+                    <h3 class="text-xl font-bold mb-4">Add Service</h3>
+                    <form onsubmit="addService(event)" class="space-y-4">
+                        <input type="text" id="srv-name" required placeholder="Service Name" class="w-full border p-2 rounded">
+                        <input type="number" id="srv-price" required placeholder="Price (Ksh)" class="w-full border p-2 rounded">
+                        <input type="text" id="srv-seed" required placeholder="Image Keyword (e.g. nails)" class="w-full border p-2 rounded">
+                        <button type="submit" class="w-full bg-gray-900 text-white py-2 rounded font-bold">Add Service</button>
+                    </form>
+                </div>
+
+                <!-- Bookings -->
+                <div class="lg:col-span-2 bg-white p-6 rounded-xl shadow">
+                    <h3 class="text-xl font-bold mb-4">Appointments</h3>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left">
+                            <thead>
+                                <tr class="bg-rose-50">
+                                    <th class="p-3">Customer</th>
+                                    <th class="p-3">Service</th>
+                                    <th class="p-3">Date</th>
+                                    <th class="p-3">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="bookings-table">
+                                <!-- Bookings injected here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Booking Modal -->
+    <div id="booking-modal" class="hidden fixed inset-0 bg-black/50 z-[60] flex items-center justify-center p-4">
+        <div class="bg-white rounded-xl max-w-md w-full p-6">
+            <h3 class="text-2xl font-bold mb-2">Book Appointment</h3>
+            <p id="modal-service-name" class="text-rose-600 font-bold mb-4"></p>
+            
+            <form onsubmit="submitBooking(event)">
+                <div class="mb-4">
+                    <label class="block text-sm font-bold mb-1">Select Date</label>
+                    <input type="date" id="book-date" required class="w-full border p-2 rounded">
+                </div>
+                <div class="mb-6">
+                    <label class="block text-sm font-bold mb-1">Select Time</label>
+                    <input type="time" id="book-time" required class="w-full border p-2 rounded">
+                </div>
+                <div class="flex justify-end space-x-2">
+                    <button type="button" onclick="closeModal()" class="px-4 py-2 text-gray-500">Cancel</button>
+                    <button type="submit" class="bg-rose-500 text-white px-6 py-2 rounded font-bold hover:bg-rose-600">Confirm Booking</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="toast" class="fixed bottom-5 right-5 bg-gray-900 text-white px-6 py-3 rounded-lg shadow-lg transform translate-y-20 transition z-[70]">Message</div>
+
+    <script>
+        // ================= SUPABASE SETUP =================
+        const { createClient } = supabase;
+        const supabaseClient = createClient('https://wacaibruxanqbkzdnkqr.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndhY2FpYnJ1eGFucWJremRua3FyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgzMjkxNTIsImV4cCI6MjA5MzkwNTE1Mn0._S75Sc-0iyRfBeEanJlMvmlPfuHNuBk_6zznYU4wPPc', {
+            auth: { persistSession: true, storageKey: 'epsilon-bsn-auth' }
+        });
+
+        let currentUser = null;
+        let selectedServiceName = null;
+
+        // Default Services
+        const defaultServices = [
+            { id: 1, name: 'Bridal Makeup', price: 15000, seed: 'makeup' },
+            { id: 2, name: 'Gel Manicure', price: 2500, seed: 'nails' },
+            { id: 3, name: 'Hair Styling', price: 3000, seed: 'hair' },
+            { id: 4, name: 'Full Body Massage', price: 5000, seed: 'spa' },
+        ];
+
+        window.addEventListener('load', async () => {
+            lucide.createIcons();
+            checkUser();
+            renderServices();
+        });
+
+        async function checkUser() {
+            const { data: { session } } = await supabaseClient.auth.getSession();
+            if (session) {
+                currentUser = session.user;
+                document.getElementById('auth-buttons').classList.add('hidden');
+                document.getElementById('user-menu').classList.remove('hidden');
+                document.getElementById('user-email').textContent = currentUser.email;
+            }
+        }
+
+        async function handleLogin(e) {
+            e.preventDefault();
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+            const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
+            if (error) showToast(error.message);
+            else { showToast("Welcome to Bella Glow."); checkUser(); showPage('home'); }
+        }
+
+        async function handleSignup(e) {
+            e.preventDefault();
+            const email = document.getElementById('signup-email').value;
+            const password = document.getElementById('signup-password').value;
+            const { error } = await supabaseClient.auth.signUp({ email, password });
+            if (error) showToast(error.message);
+            else showToast("Account created!");
+        }
+
+        async function handleLogout() {
+            await supabaseClient.auth.signOut();
+            location.reload();
+        }
+
+        function showPage(pageId) {
+            document.querySelectorAll('main > section').forEach(el => el.classList.add('hidden-section'));
+            document.getElementById(`page-${pageId}`).classList.remove('hidden-section');
+            window.scrollTo(0,0);
+            if (pageId === 'admin' && !currentUser) showPage('login');
+            else if (pageId === 'admin') loadBookings();
+        }
+
+        // ================= SERVICES LOGIC =================
+        async function renderServices() {
+            const grid = document.getElementById('services-grid');
+            grid.innerHTML = '';
+            
+            let services = defaultServices;
+            // Fetching from 'bella_services'
+            const { data } = await supabaseClient.from('bella_services').select('*');
+            if (data && data.length > 0) services = data;
+
+            services.forEach(s => {
+                const div = document.createElement('div');
+                div.className = "bg-white rounded-xl shadow hover:shadow-xl transition overflow-hidden border border-rose-100 group";
+                div.innerHTML = `
+                    <div class="h-48 overflow-hidden relative">
+                        <img src="https://picsum.photos/seed/${s.seed}/500/300" class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
+                        <div class="absolute bottom-0 left-0 bg-white px-3 py-1 font-bold text-lg text-gray-900">
+                            Ksh ${s.price.toLocaleString()}
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-2">${s.name}</h3>
+                        <button onclick="openBookingModal('${s.name}')" class="w-full bg-rose-500 text-white py-2 rounded font-bold hover:bg-rose-600 transition">Book Now</button>
+                    </div>
+                `;
+                grid.appendChild(div);
+            });
+        }
+
+        // ================= BOOKING LOGIC =================
+        function openBookingModal(name) {
+            if (!currentUser) { showToast("Please login to book"); showPage('login'); return; }
+            selectedServiceName = name;
+            document.getElementById('modal-service-name').innerText = name;
+            document.getElementById('booking-modal').classList.remove('hidden');
+        }
+
+        async function submitBooking(e) {
+            e.preventDefault();
+            const date = document.getElementById('book-date').value;
+            const time = document.getElementById('book-time').value;
+
+            // Inserting into 'bella_bookings'
+            const { error } = await supabaseClient.from('bella_bookings').insert([{
+                user_id: currentUser.id,
+                user_email: currentUser.email,
+                service_name: selectedServiceName,
+                booking_date: `${date} ${time}`,
+                status: 'pending'
+            }]);
+
+            if (error) showToast(error.message);
+            else { showToast("Booking Confirmed!"); closeModal(); }
+        }
+
+        function closeModal() {
+            document.getElementById('booking-modal').classList.add('hidden');
+        }
+
+        // ================= ADMIN LOGIC =================
+        async function addService(e) {
+            e.preventDefault();
+            // Inserting into 'bella_services'
+            const { error } = await supabaseClient.from('bella_services').insert([{
+                name: document.getElementById('srv-name').value,
+                price: parseFloat(document.getElementById('srv-price').value),
+                image_seed: document.getElementById('srv-seed').value
+            }]);
+            if (error) showToast(error.message);
+            else { showToast("Service Added."); e.target.reset(); renderServices(); }
+        }
+
+        async function loadBookings() {
+            // Fetching from 'bella_bookings'
+            const { data } = await supabaseClient.from('bella_bookings').select('*').order('created_at', { ascending: false });
+            const tbody = document.getElementById('bookings-table');
+            
+            if (!data || data.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4" class="p-4 text-center text-gray-500">No appointments yet.</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = data.map(b => `
+                <tr class="border-b hover:bg-rose-50">
+                    <td class="p-3 font-bold">${b.user_email}</td>
+                    <td class="p-3">${b.service_name}</td>
+                    <td class="p-3 text-gray-600">${b.booking_date}</td>
+                    <td class="p-3"><span class="bg-yellow-100 text-yellow-800 text-xs px-2 py-1 rounded font-bold">${b.status}</span></td>
+                </tr>
+            `).join('');
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            toast.textContent = msg;
+            toast.classList.remove('translate-y-20');
+            setTimeout(() => toast.classList.add('translate-y-20'), 3000);
+        }
+    </script>
+</body>
+</html>
