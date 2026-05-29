@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kenya Premier Estates | Find Your Home</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Supabase JS Client (Required for Auth) -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#f0fdf4',
+                            100: '#dcfce7',
+                            500: '#22c55e', // Kenyan Green feel
+                            600: '#16a34a',
+                            900: '#14532d',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        .hero-bg {
+            background-image: linear-gradient(rgba(15, 23, 42, 0.6), rgba(15, 23, 42, 0.7)), url('https://picsum.photos/seed/nairobicity/1920/1080');
+            background-size: cover;
+            background-position: center;
+        }
+        .card-hover:hover {
+            transform: translateY(-5px);
+        }
+    </style>
+</head>
+<body class="font-sans text-slate-600 bg-slate-50 antialiased">
+
+    <!-- Navigation -->
+    <nav class="fixed w-full z-40 bg-white/90 backdrop-blur-md shadow-sm transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-20 items-center">
+                <!-- Logo -->
+                <div class="flex-shrink-0 flex items-center gap-2 cursor-pointer">
+                    <i data-lucide="building-2" class="h-8 w-8 text-brand-600"></i>
+                    <span class="font-bold text-2xl text-slate-900 tracking-tight">Kenya<span class="text-brand-600">Estates</span></span>
+                </div>
+
+                <!-- Desktop Menu -->
+                <div class="hidden md:flex space-x-8 items-center">
+                    <a href="#home" class="text-slate-600 hover:text-brand-600 font-medium transition">Home</a>
+                    <a href="#listings" class="text-slate-600 hover:text-brand-600 font-medium transition">Properties</a>
+                    <a href="#contact" class="text-slate-600 hover:text-brand-600 font-medium transition">Contact</a>
+                    
+                    <!-- Auth Buttons (Dynamic) -->
+                    <div id="auth-section" class="flex items-center gap-4">
+                        <button onclick="openModal('login-modal')" class="text-slate-600 hover:text-brand-600 font-medium transition">Sign In</button>
+                        <button onclick="openModal('signup-modal')" class="px-5 py-2.5 bg-brand-600 text-white rounded-full font-medium hover:bg-brand-500 transition shadow-lg shadow-brand-500/30">
+                            Register
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Mobile Menu Button -->
+                <div class="md:hidden flex items-center">
+                    <button id="mobile-menu-btn" class="text-slate-600 hover:text-slate-900 focus:outline-none">
+                        <i data-lucide="menu" class="w-8 h-8"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-slate-100">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                <a href="#home" class="block px-3 py-2 text-slate-700 font-medium">Home</a>
+                <a href="#listings" class="block px-3 py-2 text-slate-700 font-medium">Properties</a>
+                <div class="px-3 py-2 flex gap-2">
+                    <button onclick="openModal('login-modal')" class="text-brand-600 font-medium">Sign In</button>
+                    <button onclick="openModal('signup-modal')" class="text-brand-600 font-medium">Register</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header id="home" class="hero-bg h-screen min-h-[600px] flex items-center justify-center relative">
+        <div class="text-center px-4 max-w-4xl mx-auto mt-16">
+            <span class="inline-block py-1 px-3 rounded-full bg-white/20 backdrop-blur-sm text-white text-sm font-semibold mb-6 border border-white/30">
+                #1 Real Estate in Kenya
+            </span>
+            <h1 class="text-4xl md:text-6xl font-bold text-white mb-6 leading-tight">
+                Find Your Dream Home <br/> in Nairobi & Beyond
+            </h1>
+            <p class="text-lg md:text-xl text-slate-200 mb-10 max-w-2xl mx-auto">
+                From Kilimani apartments to Mombasa beach houses. We connect Kenyans to their perfect property.
+            </p>
+            
+            <!-- Search Bar -->
+            <div class="bg-white p-2 rounded-full shadow-2xl flex flex-col md:flex-row max-w-3xl mx-auto">
+                <div class="flex-1 flex items-center px-4 py-2 border-b md:border-b-0 md:border-r border-slate-100">
+                    <i data-lucide="search" class="w-5 h-5 text-slate-400 mr-2"></i>
+                    <input type="text" placeholder="Nairobi, Mombasa, Kisumu..." class="w-full outline-none text-slate-700 placeholder-slate-400">
+                </div>
+                <button class="bg-brand-600 hover:bg-brand-500 text-white px-8 py-3 rounded-full font-bold transition m-1">
+                    Search
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Stats Section -->
+    <section class="py-12 bg-white border-b border-slate-100">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+                <div>
+                    <p class="text-3xl font-bold text-brand-600 mb-1">500+</p>
+                    <p class="text-sm text-slate-500 font-medium">Homes Sold</p>
+                </div>
+                <div>
+                    <p class="text-3xl font-bold text-brand-600 mb-1">Ksh 2B+</p>
+                    <p class="text-sm text-slate-500 font-medium">Property Value</p>
+                </div>
+                <div>
+                    <p class="text-3xl font-bold text-brand-600 mb-1">25+</p>
+                    <p class="text-sm text-slate-500 font-medium">Counties Covered</p>
+                </div>
+                <div>
+                    <p class="text-3xl font-bold text-brand-600 mb-1">24/7</p>
+                    <p class="text-sm text-slate-500 font-medium">Customer Support</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Listings -->
+    <section id="listings" class="py-20 bg-slate-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row justify-between items-end mb-12">
+                <div>
+                    <h2 class="text-3xl font-bold text-slate-900 mb-2">Featured Properties</h2>
+                    <p class="text-slate-600">Handpicked selection from Kilimani, Karen, Westlands and Mombasa.</p>
+                </div>
+                <div class="flex gap-2 mt-4 md:mt-0">
+                    <button class="filter-btn active px-4 py-2 rounded-lg bg-brand-600 text-white text-sm font-medium transition" data-filter="all">All</button>
+                    <button class="filter-btn px-4 py-2 rounded-lg bg-white text-slate-600 hover:bg-slate-100 text-sm font-medium transition border border-slate-200" data-filter="sale">For Sale</button>
+                    <button class="filter-btn px-4 py-2 rounded-lg bg-white text-slate-600 hover:bg-slate-100 text-sm font-medium transition border border-slate-200" data-filter="rent">For Rent</button>
+                </div>
+            </div>
+
+            <div id="property-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Listings rendered by JS -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 text-slate-300 py-12 border-t border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-4 gap-8">
+            <div class="col-span-1 md:col-span-1">
+                <div class="flex items-center gap-2 mb-4 text-white">
+                    <i data-lucide="building-2" class="h-6 w-6 text-brand-500"></i>
+                    <span class="font-bold text-xl">KenyaEstates</span>
+                </div>
+                <p class="text-sm text-slate-400">
+                    The most trusted real estate platform in Kenya. Your home is our priority.
+                </p>
+            </div>
+            
+            <div>
+                <h3 class="text-white font-semibold mb-4">Locations</h3>
+                <ul class="space-y-2 text-sm">
+                    <li><a href="#" class="hover:text-brand-500 transition">Nairobi</a></li>
+                    <li><a href="#" class="hover:text-brand-500 transition">Mombasa</a></li>
+                    <li><a href="#" class="hover:text-brand-500 transition">Kisumu</a></li>
+                    <li><a href="#" class="hover:text-brand-500 transition">Nakuru</a></li>
+                </ul>
+            </div>
+
+            <div>
+                <h3 class="text-white font-semibold mb-4">Contact</h3>
+                <ul class="space-y-2 text-sm">
+                    <li class="flex items-center gap-2"><i data-lucide="map-pin" class="w-4 h-4"></i> Westlands, Nairobi</li>
+                    <li class="flex items-center gap-2"><i data-lucide="phone" class="w-4 h-4"></i> 254-723-456-789</li>
+                    <li class="flex items-center gap-2"><i data-lucide="mail" class="w-4 h-4"></i> sales@kenyaestates.com</li>
+                </ul>
+            </div>
+        </div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-12 pt-8 border-t border-slate-800 text-center text-sm">
+            &copy; 2026 Kenya Premier Estates.
+        </div>
+    </footer>
+
+    <!-- MODAL: Sign In -->
+    <div id="login-modal" class="hidden fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+        <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" onclick="closeModal('login-modal')"></div>
+            <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+            <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+                <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                    <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4" id="modal-title">Sign In</h3>
+                    <form id="login-form" onsubmit="handleLogin(event)">
+                        <div class="mb-4">
+                            <label class="block text-gray-700 text-sm font-bold mb-2">Email</label>
+                            <input type="email" id="login-email" required class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-brand-500">
+                        </div>
+                        <div class="mb-6">
+                            <label class="block text-gray-700 text-sm font-bold mb-2">Password</label>
+                            <input type="password" id="login-password" required class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-brand-500">
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <button type="submit" class="w-full bg-brand-600 text-white font-bold py-2 px-4 rounded hover:bg-brand-500 transition">Sign In</button>
+                        </div>
+                        <p id="login-error" class="text-red-500 text-xs italic mt-4 hidden"></p>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: Sign Up -->
+    <div id="signup-modal" class="hidden fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+        <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" onclick="closeModal('signup-modal')"></div>
+            <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+            <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+                <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                    <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4" id="modal-title">Create Account</h3>
+                    <form id="signup-form" onsubmit="handleSignUp(event)">
+                        <div class="mb-4">
+                            <label class="block text-gray-700 text-sm font-bold mb-2">Email</label>
+                            <input type="email" id="signup-email" required class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-brand-500">
+                        </div>
+                        <div class="mb-6">
+                            <label class="block text-gray-700 text-sm font-bold mb-2">Password</label>
+                            <input type="password" id="signup-password" required class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-brand-500">
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <button type="submit" class="w-full bg-brand-600 text-white font-bold py-2 px-4 rounded hover:bg-brand-500 transition">Sign Up</button>
+                        </div>
+                        <p id="signup-error" class="text-red-500 text-xs italic mt-4 hidden"></p>
+                        <p id="signup-success" class="text-green-600 text-xs italic mt-4 hidden">Check your email for confirmation link!</p>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN LOGIC -->
+    <script>
+        // ---------------------------------------------------------
+        // SUPABASE SETUP (Using provided credentials)
+        // ---------------------------------------------------------
+        const { createClient } = supabase;
+        const supabaseClient = createClient('https://wacaibruxanqbkzdnkqr.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndhY2FpYnJ1eGFucWJremRua3FyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgzMjkxNTIsImV4cCI6MjA5MzkwNTE1Mn0._S75Sc-0iyRfBeEanJlMvmlPfuHNuBk_6zznYU4wPPc', {
+            auth: { persistSession: true, storageKey: 'epsilon-bsn-auth' }
+        });
+
+        // ---------------------------------------------------------
+        // KENYAN LISTINGS DATA
+        // ---------------------------------------------------------
+        const listings = [
+            {
+                id: 1,
+                title: "Modern Villa in Karen",
+                price: "Ksh 85,000,000",
+                address: "Karen Lane, Nairobi",
+                beds: 5,
+                baths: 5,
+                sqft: "6,000",
+                type: "sale",
+                image: "https://picsum.photos/seed/karenhouse/600/400",
+                badge: "For Sale"
+            },
+            {
+                id: 2,
+                title: "Apartment in Kilimani",
+                price: "Ksh 120,000 / mo",
+                address: "Kilimani Rd, Nairobi",
+                beds: 2,
+                baths: 2,
+                sqft: "1,200",
+                type: "rent",
+                image: "https://picsum.photos/seed/kilimaniapt/600/400",
+                badge: "For Rent"
+            },
+            {
+                id: 3,
+                title: "Beach House Nyali",
+                price: "Ksh 45,000,000",
+                address: "Nyali, Mombasa",
+                beds: 4,
+                baths: 3,
+                sqft: "3,500",
+                type: "sale",
+                image: "https://picsum.photos/seed/mombasabeach/600/400",
+                badge: "Ocean View"
+            },
+            {
+                id: 4,
+                title: "Studio in Westlands",
+                price: "Ksh 35,000 / mo",
+                address: "Mpaka Rd, Westlands",
+                beds: 1,
+                baths: 1,
+                sqft: "450",
+                type: "rent",
+                image: "https://picsum.photos/seed/westlandsstudio/600/400",
+                badge: "Hot Deal"
+            },
+            {
+                id: 5,
+                title: "Family Home Nakuru",
+                price: "Ksh 18,000,000",
+                address: "Milimani, Nakuru",
+                beds: 4,
+                baths: 3,
+                sqft: "2,800",
+                type: "sale",
+                image: "https://picsum.photos/seed/nakuruhome/600/400",
+                badge: "New"
+            },
+            {
+                id: 6,
+                title: "Lakeside Apartment",
+                price: "Ksh 55,000 / mo",
+                address: "Milimani, Kisumu",
+                beds: 2,
+                baths: 1,
+                sqft: "900",
+                type: "rent",
+                image: "https://picsum.photos/seed/kisumuapt/600/400",
+                badge: "For Rent"
+            }
+        ];
+
+        // ---------------------------------------------------------
+        // UI RENDER FUNCTIONS
+        // ---------------------------------------------------------
+        const propertyGrid = document.getElementById('property-grid');
+
+        function renderListings(filterType) {
+            propertyGrid.innerHTML = '';
+            const filteredListings = filterType === 'all' 
+                ? listings 
+                : listings.filter(item => item.type === filterType);
+
+            filteredListings.forEach(property => {
+                const card = document.createElement('div');
+                card.className = "bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition duration-300 card-hover border border-slate-100";
+                card.innerHTML = `
+                    <div class="relative h-64 overflow-hidden group">
+                        <img src="${property.image}" alt="${property.title}" class="w-full h-full object-cover transform group-hover:scale-110 transition duration-500">
+                        <div class="absolute top-4 left-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-bold text-brand-600 shadow-sm">
+                            ${property.badge}
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex justify-between items-start mb-2">
+                            <h3 class="text-xl font-bold text-slate-900">${property.title}</h3>
+                            <span class="text-brand-600 font-bold">${property.price}</span>
+                        </div>
+                        <p class="text-slate-500 text-sm mb-4 flex items-center">
+                            <i data-lucide="map-pin" class="w-4 h-4 mr-1"></i> ${property.address}
+                        </p>
+                        <div class="flex justify-between border-t border-slate-100 pt-4 text-slate-600 text-sm">
+                            <div class="flex items-center gap-1"><i data-lucide="bed-double" class="w-4 h-4"></i> ${property.beds} Beds</div>
+                            <div class="flex items-center gap-1"><i data-lucide="bath" class="w-4 h-4"></i> ${property.baths} Baths</div>
+                            <div class="flex items-center gap-1"><i data-lucide="maximize" class="w-4 h-4"></i> ${property.sqft} sqft</div>
+                        </div>
+                    </div>
+                `;
+                propertyGrid.appendChild(card);
+            });
+            lucide.createIcons();
+        }
+
+        renderListings('all');
+
+        // Filter Logic
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.filter-btn').forEach(b => {
+                    b.classList.remove('bg-brand-600', 'text-white');
+                    b.classList.add('bg-white', 'text-slate-600');
+                });
+                btn.classList.remove('bg-white', 'text-slate-600');
+                btn.classList.add('bg-brand-600', 'text-white');
+                renderListings(btn.dataset.filter);
+            });
+        });
+
+        // Mobile Menu
+        document.getElementById('mobile-menu-btn').addEventListener('click', () => {
+            document.getElementById('mobile-menu').classList.toggle('hidden');
+        });
+
+        // ---------------------------------------------------------
+        // AUTHENTICATION LOGIC
+        // ---------------------------------------------------------
+        
+        // 1. Check Session on Load
+        async function checkUser() {
+            const { data: { session } } = await supabaseClient.auth.getSession();
+            updateUI(session);
+        }
+
+        // 2. Listen for Auth Changes
+        supabaseClient.auth.onAuthStateChange((event, session) => {
+            updateUI(session);
+        });
+
+        // 3. Update UI based on login state
+        function updateUI(session) {
+            const authSection = document.getElementById('auth-section');
+            if (session) {
+                // User is Logged In
+                const email = session.user.email;
+                authSection.innerHTML = `
+                    <span class="text-slate-500 text-sm">Hi, ${email.split('@')[0]}</span>
+                    <button onclick="handleLogout()" class="text-red-500 hover:text-red-700 font-medium transition">Sign Out</button>
+                `;
+            } else {
+                // User is Logged Out
+                authSection.innerHTML = `
+                    <button onclick="openModal('login-modal')" class="text-slate-600 hover:text-brand-600 font-medium transition">Sign In</button>
+                    <button onclick="openModal('signup-modal')" class="px-5 py-2.5 bg-brand-600 text-white rounded-full font-medium hover:bg-brand-500 transition shadow-lg shadow-brand-500/30">
+                        Register
+                    </button>
+                `;
+            }
+        }
+
+        // 4. Handle Login
+        async function handleLogin(e) {
+            e.preventDefault();
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+            const errorDiv = document.getElementById('login-error');
+
+            const { data, error } = await supabaseClient.auth.signInWithPassword({
+                email: email,
+                password: password,
+            });
+
+            if (error) {
+                errorDiv.textContent = error.message;
+                errorDiv.classList.remove('hidden');
+            } else {
+                closeModal('login-modal');
+                errorDiv.classList.add('hidden');
+            }
+        }
+
+        // 5. Handle Sign Up
+        async function handleSignUp(e) {
+            e.preventDefault();
+            const email = document.getElementById('signup-email').value;
+            const password = document.getElementById('signup-password').value;
+            const errorDiv = document.getElementById('signup-error');
+            const successDiv = document.getElementById('signup-success');
+
+            const { data, error } = await supabaseClient.auth.signUp({
+                email: email,
+                password: password,
+            });
+
+            if (error) {
+                errorDiv.textContent = error.message;
+                errorDiv.classList.remove('hidden');
+                successDiv.classList.add('hidden');
+            } else {
+                successDiv.classList.remove('hidden');
+                errorDiv.classList.add('hidden');
+                // Note: Depending on settings, user might need to confirm email
+            }
+        }
+
+        // 6. Handle Logout
+        async function handleLogout() {
+            await supabaseClient.auth.signOut();
+        }
+
+        // Modal Helpers
+        function openModal(id) {
+            document.getElementById(id).classList.remove('hidden');
+        }
+        function closeModal(id) {
+            document.getElementById(id).classList.add('hidden');
+        }
+
+        // Initialize
+        checkUser();
+        lucide.createIcons();
+
+    </script>
+</body>
+</html>
