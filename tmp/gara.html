@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kenyapit Garage - Auto Repair & Spares</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Supabase JS -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Russo+One&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+
+    <style>
+        body { font-family: 'Roboto', sans-serif; }
+        .brand-font { font-family: 'Russo One', sans-serif; }
+        .hero-bg {
+            background-image: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)), url('https://picsum.photos/seed/mechanic/1600/900');
+            background-size: cover;
+            background-position: center;
+        }
+        .hidden-section { display: none; }
+        .fade-in { animation: fadeIn 0.3s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+    <!-- Navigation -->
+    <nav class="bg-gray-900 text-white fixed w-full z-50 shadow-lg border-b-4 border-amber-500">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <i data-lucide="wrench" class="h-6 w-6 text-amber-500 mr-2"></i>
+                    <span class="brand-font text-2xl tracking-wider">KENYAPIT</span>
+                </div>
+                <div class="hidden md:flex items-center space-x-6">
+                    <button onclick="showPage('home')" class="hover:text-amber-500 transition">Home</button>
+                    <button onclick="showPage('services')" class="hover:text-amber-500 transition">Services</button>
+                    <button onclick="showPage('spares')" class="hover:text-amber-500 transition">Spare Parts</button>
+                    
+                    <!-- Auth Buttons -->
+                    <div id="auth-buttons" class="flex items-center space-x-4 border-l border-gray-700 pl-6">
+                        <button onclick="showPage('login')" class="text-amber-500 font-bold">Log in</button>
+                    </div>
+
+                    <!-- User Menu -->
+                    <div id="user-menu" class="hidden flex items-center space-x-4">
+                        <span id="user-email" class="text-sm text-gray-400"></span>
+                        <button onclick="showPage('admin')" class="flex items-center hover:text-amber-500">
+                            <i data-lucide="settings" class="w-4 h-4 mr-1"></i> Admin
+                        </button>
+                        <button onclick="handleLogout()" class="text-red-400 hover:text-red-300 text-sm">Logout</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="pt-16">
+
+        <!-- ================= HOME PAGE ================= -->
+        <section id="page-home" class="fade-in">
+            <div class="hero-bg h-[500px] flex items-center justify-center text-center px-4">
+                <div class="max-w-3xl">
+                    <h1 class="brand-font text-4xl md:text-6xl text-white mb-4">Keep Your Engine Running</h1>
+                    <p class="text-lg text-gray-300 mb-8">Expert mechanics and genuine spares right here in Nairobi Industrial Area.</p>
+                    <div class="flex justify-center space-x-4">
+                        <button onclick="showPage('services')" class="bg-amber-500 hover:bg-amber-600 text-white font-bold py-3 px-6 rounded">Book Service</button>
+                        <button onclick="showPage('spares')" class="border border-white hover:bg-white hover:text-gray-900 text-white font-bold py-3 px-6 rounded transition">Buy Parts</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="max-w-7xl mx-auto px-4 py-16">
+                <h2 class="text-3xl font-bold text-center mb-10">Why Choose Us?</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div class="text-center p-6 bg-white rounded-lg shadow">
+                        <i data-lucide="clock" class="h-10 w-10 text-amber-500 mx-auto mb-4"></i>
+                        <h3 class="font-bold text-lg mb-2">Fast Turnaround</h3>
+                        <p class="text-gray-600">Most services done same-day. Don't wait weeks for your car.</p>
+                    </div>
+                    <div class="text-center p-6 bg-white rounded-lg shadow">
+                        <i data-lucide="shield-check" class="h-10 w-10 text-amber-500 mx-auto mb-4"></i>
+                        <h3 class="font-bold text-lg mb-2">Warranty on Repairs</h3>
+                        <p class="text-gray-600">We stand by our work. 3-month warranty on labor.</p>
+                    </div>
+                    <div class="text-center p-6 bg-white rounded-lg shadow">
+                        <i data-lucide="map-pin" class="h-10 w-10 text-amber-500 mx-auto mb-4"></i>
+                        <h3 class="font-bold text-lg mb-2">Convenient Location</h3>
+                        <p class="text-gray-600">Located near Enterprise Road, ample parking space available.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= SERVICES PAGE (Booking) ================= -->
+        <section id="page-services" class="hidden-section fade-in max-w-7xl mx-auto px-4 py-8">
+            <h2 class="text-3xl font-bold mb-2">Our Services</h2>
+            <p class="text-gray-500 mb-8">Book a slot for your car repair or maintenance.</p>
+
+            <div id="services-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Services injected here -->
+            </div>
+        </section>
+
+        <!-- ================= SPARES PAGE (Products) ================= -->
+        <section id="page-spares" class="hidden-section fade-in max-w-7xl mx-auto px-4 py-8">
+            <h2 class="text-3xl font-bold mb-2">Spare Parts Shop</h2>
+            <p class="text-gray-500 mb-8">Genuine parts for Toyota, Nissan, and other models.</p>
+
+            <div id="products-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- Products injected here -->
+            </div>
+        </section>
+
+        <!-- ================= LOGIN / SIGNUP ================= -->
+        <section id="page-login" class="hidden-section fade-in max-w-md mx-auto px-4 py-20">
+            <div class="bg-white p-8 rounded-xl shadow-lg border-l-4 border-amber-500">
+                <h2 class="text-2xl font-bold text-center mb-6">Garage Login</h2>
+                <form onsubmit="handleLogin(event)" class="space-y-4">
+                    <input type="email" id="login-email" required placeholder="Email" class="w-full border p-3 rounded bg-gray-50">
+                    <input type="password" id="login-password" required placeholder="Password" class="w-full border p-3 rounded bg-gray-50">
+                    <button type="submit" class="w-full bg-gray-900 text-white py-3 rounded font-bold hover:bg-gray-800">Login</button>
+                </form>
+                <p class="mt-4 text-center text-sm">No account? <button onclick="showPage('signup')" class="text-amber-600 font-bold">Sign Up</button></p>
+            </div>
+        </section>
+
+        <section id="page-signup" class="hidden-section fade-in max-w-md mx-auto px-4 py-20">
+            <div class="bg-white p-8 rounded-xl shadow-lg border-l-4 border-amber-500">
+                <h2 class="text-2xl font-bold text-center mb-6">Create Account</h2>
+                <form onsubmit="handleSignup(event)" class="space-y-4">
+                    <input type="text" id="signup-name" required placeholder="Full Name" class="w-full border p-3 rounded">
+                    <input type="email" id="signup-email" required placeholder="Email" class="w-full border p-3 rounded">
+                    <input type="tel" id="signup-phone" required placeholder="254-723-456-789" class="w-full border p-3 rounded">
+                    <input type="password" id="signup-password" required placeholder="Password" class="w-full border p-3 rounded">
+                    <button type="submit" class="w-full bg-amber-500 text-white py-3 rounded font-bold hover:bg-amber-600">Sign Up</button>
+                </form>
+            </div>
+        </section>
+
+        <!-- ================= ADMIN DASHBOARD ================= -->
+        <section id="page-admin" class="hidden-section fade-in max-w-7xl mx-auto px-4 py-8">
+            <h2 class="text-3xl font-bold mb-6">Garage Management</h2>
+            
+            <!-- Admin Tabs -->
+            <div class="flex space-x-4 mb-6 border-b">
+                <button onclick="showAdminTab('services')" class="pb-2 border-b-2 border-gray-900 font-bold">Manage Services</button>
+                <button onclick="showAdminTab('spares')" class="pb-2 border-b-2 border-transparent hover:text-gray-500">Manage Spares</button>
+                <button onclick="showAdminTab('orders')" class="pb-2 border-b-2 border-transparent hover:text-gray-500">Bookings & Orders</button>
+            </div>
+
+            <div id="admin-services" class="bg-white p-6 rounded-xl shadow">
+                <h3 class="text-xl font-bold mb-4">Add New Service</h3>
+                <form onsubmit="addService(event)" class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+                    <input type="text" id="srv-name" placeholder="Service Name (e.g. Oil Change)" required class="border p-2 rounded">
+                    <input type="text" id="srv-desc" placeholder="Description" required class="border p-2 rounded">
+                    <input type="number" id="srv-price" placeholder="Price (Ksh)" required class="border p-2 rounded">
+                    <button type="submit" class="bg-gray-900 text-white rounded font-bold">Add Service</button>
+                </form>
+            </div>
+
+            <div id="admin-spares" class="hidden bg-white p-6 rounded-xl shadow">
+                <h3 class="text-xl font-bold mb-4">Add Spare Part</h3>
+                <form onsubmit="addProduct(event)" class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+                    <input type="text" id="prod-name" placeholder="Part Name (e.g. Brake Pads)" required class="border p-2 rounded">
+                    <input type="number" id="prod-price" placeholder="Price (Ksh)" required class="border p-2 rounded">
+                    <input type="text" id="prod-seed" placeholder="Image Keyword (e.g. tyre)" required class="border p-2 rounded">
+                    <button type="submit" class="bg-amber-500 text-white rounded font-bold">Add Part</button>
+                </form>
+            </div>
+
+            <div id="admin-orders" class="hidden bg-white p-6 rounded-xl shadow">
+                <h3 class="text-xl font-bold mb-4">All Bookings & Orders</h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-gray-100">
+                                <th class="p-3">Type</th>
+                                <th class="p-3">Item</th>
+                                <th class="p-3">Client</th>
+                                <th class="p-3">Date/Time</th>
+                                <th class="p-3">Price</th>
+                            </tr>
+                        </thead>
+                        <tbody id="orders-table"></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Booking Modal (Services) -->
+    <div id="booking-modal" class="hidden fixed inset-0 bg-black/50 z-[60] flex items-center justify-center p-4">
+        <div class="bg-white rounded-xl max-w-md w-full p-6">
+            <h3 class="text-2xl font-bold mb-2">Book Service</h3>
+            <p id="modal-service-name" class="text-gray-600 mb-4 border-b pb-2"></p>
+            
+            <form onsubmit="submitBooking(event)">
+                <div class="mb-4">
+                    <label class="block text-sm font-bold mb-1">Select Date</label>
+                    <input type="date" id="book-date" required class="w-full border p-2 rounded">
+                </div>
+                <div class="mb-6">
+                    <label class="block text-sm font-bold mb-1">Select Time</label>
+                    <input type="time" id="book-time" required class="w-full border p-2 rounded">
+                </div>
+                <div class="flex justify-end space-x-2">
+                    <button type="button" onclick="closeModal('booking-modal')" class="px-4 py-2 text-gray-500">Cancel</button>
+                    <button type="submit" class="bg-amber-500 text-white px-6 py-2 rounded font-bold hover:bg-amber-600">Confirm Booking</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Product Order Modal -->
+    <div id="product-modal" class="hidden fixed inset-0 bg-black/50 z-[60] flex items-center justify-center p-4">
+        <div class="bg-white rounded-xl max-w-md w-full p-6">
+            <h3 class="text-2xl font-bold mb-2">Order Spare Part</h3>
+            <p id="modal-product-name" class="text-gray-600 mb-4"></p>
+            <p class="text-sm text-gray-500 mb-4">We will check availability and call you on 254-723-456-789.</p>
+            <button onclick="submitProductOrder()" class="w-full bg-gray-900 text-white py-2 rounded font-bold">Place Order Request</button>
+            <button onclick="closeModal('product-modal')" class="w-full mt-2 text-gray-500">Cancel</button>
+        </div>
+    </div>
+
+    <div id="toast" class="fixed bottom-5 right-5 bg-gray-900 text-white px-6 py-3 rounded-lg shadow-lg transform translate-y-20 transition z-[70]">Message</div>
+
+    <script>
+        // ================= SUPABASE SETUP =================
+        const { createClient } = supabase;
+        const supabaseClient = createClient('https://wacaibruxanqbkzdnkqr.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndhY2FpYnJ1eGFucWJremRua3FyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgzMjkxNTIsImV4cCI6MjA5MzkwNTE1Mn0._S75Sc-0iyRfBeEanJlMvmlPfuHNuBk_6zznYU4wPPc', {
+            auth: { persistSession: true, storageKey: 'epsilon-bsn-auth' }
+        });
+
+        let currentUser = null;
+        let selectedService = null;
+        let selectedProduct = null;
+
+        // Default Data
+        const defaultServices = [
+            { id: 1, name: 'General Service', desc: 'Oil change, filter check, fluids top-up', price: 5000 },
+            { id: 2, name: 'Car Wash (Ext + Int)', desc: 'Vacuum, polish, shampoo', price: 1000 },
+            { id: 3, name: 'Brake Repair', desc: 'Pad replacement and disc grinding', price: 3500 },
+            { id: 4, name: 'Engine Diagnostics', desc: 'Computer scan and error reporting', price: 2000 },
+        ];
+
+        const defaultProducts = [
+            { id: 1, name: 'Synthetic Engine Oil (5L)', price: 6500, seed: 'oil' },
+            { id: 2, name: 'Ceramic Brake Pads (Front)', price: 3200, seed: 'brake' },
+            { id: 3, name: 'Universal Floor Mats', price: 1500, seed: 'mats' },
+            { id: 4, name: 'LED Headlight Bulbs', price: 2500, seed: 'light' },
+        ];
+
+        window.addEventListener('load', async () => {
+            lucide.createIcons();
+            checkUser();
+            renderContent();
+        });
+
+        async function checkUser() {
+            const { data: { session } } = await supabaseClient.auth.getSession();
+            if (session) {
+                currentUser = session.user;
+                document.getElementById('auth-buttons').classList.add('hidden');
+                document.getElementById('user-menu').classList.remove('hidden');
+                document.getElementById('user-email').textContent = currentUser.email;
+            }
+        }
+
+        async function handleLogin(e) {
+            e.preventDefault();
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+            const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
+            if (error) showToast(error.message);
+            else { showToast("Welcome back!"); checkUser(); showPage('home'); }
+        }
+
+        async function handleSignup(e) {
+            e.preventDefault();
+            const email = document.getElementById('signup-email').value;
+            const password = document.getElementById('signup-password').value;
+            const { error } = await supabaseClient.auth.signUp({ email, password });
+            if (error) showToast(error.message);
+            else showToast("Account created!");
+        }
+
+        async function handleLogout() {
+            await supabaseClient.auth.signOut();
+            location.reload();
+        }
+
+        function showPage(pageId) {
+            document.querySelectorAll('main > section').forEach(el => el.classList.add('hidden-section'));
+            document.getElementById(`page-${pageId}`).classList.remove('hidden-section');
+            window.scrollTo(0,0);
+            if (pageId === 'admin' && !currentUser) showPage('login');
+        }
+
+        // ================= RENDERING =================
+        async function renderContent() {
+            // Services
+            let services = defaultServices;
+            const { data: sData } = await supabaseClient.from('garage_services').select('*');
+            if(sData && sData.length > 0) services = sData;
+
+            const sGrid = document.getElementById('services-grid');
+            sGrid.innerHTML = services.map(s => `
+                <div class="bg-white p-6 rounded-lg shadow border-l-4 border-amber-500 flex flex-col justify-between h-full">
+                    <div>
+                        <h3 class="text-xl font-bold text-gray-900">${s.name}</h3>
+                        <p class="text-gray-500 text-sm my-2">${s.desc}</p>
+                        <p class="text-2xl font-bold text-gray-900">Ksh ${s.price.toLocaleString()}</p>
+                    </div>
+                    <button onclick="openBookingModal('${s.name}', ${s.id})" class="mt-4 w-full bg-gray-900 text-white py-2 rounded hover:bg-gray-800 transition">Book Now</button>
+                </div>
+            `).join('');
+
+            // Products
+            let products = defaultProducts;
+            const { data: pData } = await supabaseClient.from('garage_products').select('*');
+            if(pData && pData.length > 0) products = pData;
+
+            const pGrid = document.getElementById('products-grid');
+            pGrid.innerHTML = products.map(p => `
+                <div class="bg-white rounded-lg shadow overflow-hidden group">
+                    <img src="https://picsum.photos/seed/${p.seed}/400/300" class="w-full h-40 object-cover">
+                    <div class="p-4">
+                        <h4 class="font-bold text-lg truncate">${p.name}</h4>
+                        <div class="flex justify-between items-center mt-2">
+                            <span class="text-amber-600 font-bold">Ksh ${p.price.toLocaleString()}</span>
+                            <button onclick="openProductModal('${p.name}', ${p.id}, ${p.price})" class="text-sm bg-gray-200 hover:bg-gray-300 px-3 py-1 rounded font-bold">Order</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // ================= ACTIONS =================
+        function openBookingModal(name, id) {
+            if(!currentUser) { showToast("Please login to book"); showPage('login'); return; }
+            selectedService = { name, id };
+            document.getElementById('modal-service-name').innerText = name;
+            document.getElementById('booking-modal').classList.remove('hidden');
+        }
+
+        async function submitBooking(e) {
+            e.preventDefault();
+            const date = document.getElementById('book-date').value;
+            const time = document.getElementById('book-time').value;
+            
+            // Get price (hacky lookup for demo)
+            const price = defaultServices.find(s => s.id === selectedService.id)?.price || 0;
+
+            const { error } = await supabaseClient.from('garage_bookings').insert([{
+                user_id: currentUser.id,
+                user_email: currentUser.email,
+                item_name: selectedService.name,
+                item_type: 'Service',
+                booking_date: `${date} ${time}`,
+                amount: price
+            }]);
+
+            if(error) showToast(error.message);
+            else { showToast("Booking Confirmed!"); closeModal('booking-modal'); }
+        }
+
+        function openProductModal(name, id, price) {
+            if(!currentUser) { showToast("Please login to order"); showPage('login'); return; }
+            selectedProduct = { name, id, price };
+            document.getElementById('modal-product-name').innerText = `${name} - Ksh ${price.toLocaleString()}`;
+            document.getElementById('product-modal').classList.remove('hidden');
+        }
+
+        async function submitProductOrder() {
+            const { error } = await supabaseClient.from('garage_bookings').insert([{
+                user_id: currentUser.id,
+                user_email: currentUser.email,
+                item_name: selectedProduct.name,
+                item_type: 'Product Order',
+                booking_date: 'ASAP',
+                amount: selectedProduct.price
+            }]);
+
+            if(error) showToast(error.message);
+            else { showToast("Order Request Sent!"); closeModal('product-modal'); }
+        }
+
+        function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+
+        // ================= ADMIN =================
+        function showAdminTab(tab) {
+            ['admin-services', 'admin-spares', 'admin-orders'].forEach(id => document.getElementById(id).classList.add('hidden'));
+            document.getElementById(`admin-${tab}`).classList.remove('hidden');
+            if(tab === 'orders') loadOrders();
+        }
+
+        async function addService(e) {
+            e.preventDefault();
+            const { error } = await supabaseClient.from('garage_services').insert([{
+                name: document.getElementById('srv-name').value,
+                desc: document.getElementById('srv-desc').value,
+                price: parseFloat(document.getElementById('srv-price').value)
+            }]);
+            if(error) showToast(error.message); else { showToast("Service Added"); e.target.reset(); renderContent(); }
+        }
+
+        async function addProduct(e) {
+            e.preventDefault();
+            const { error } = await supabaseClient.from('garage_products').insert([{
+                name: document.getElementById('prod-name').value,
+                price: parseFloat(document.getElementById('prod-price').value),
+                seed: document.getElementById('prod-seed').value
+            }]);
+            if(error) showToast(error.message); else { showToast("Product Added"); e.target.reset(); renderContent(); }
+        }
+
+        async function loadOrders() {
+            const { data } = await supabaseClient.from('garage_bookings').select('*').order('created_at', { ascending: false });
+            const tbody = document.getElementById('orders-table');
+            tbody.innerHTML = data ? data.map(o => `
+                <tr class="border-b">
+                    <td class="p-3"><span class="px-2 py-1 rounded text-xs font-bold ${o.item_type === 'Service' ? 'bg-blue-100 text-blue-800' : 'bg-green-100 text-green-800'}">${o.item_type}</span></td>
+                    <td class="p-3 font-bold">${o.item_name}</td>
+                    <td class="p-3">${o.user_email}</td>
+                    <td class="p-3 text-gray-600">${o.booking_date}</td>
+                    <td class="p-3">Ksh ${o.amount}</td>
+                </tr>
+            `).join('') : '';
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            toast.textContent = msg;
+            toast.classList.remove('translate-y-20');
+            setTimeout(() => toast.classList.add('translate-y-20'), 3000);
+        }
+    </script>
+</body>
+</html>
+  
